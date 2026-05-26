@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Today's Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#f5efe6;--cream2:#ede4d8;--cream3:#e6dace;
+  --sand:#d4c4aa;--sage:#8b9e7c;--sage-l:#c8d4b8;--sage-ll:#eaf0e4;
+  --rose:#c9908a;--rose-l:#f0ddd9;--rose-ll:#fdf5f4;
+  --brown:#6b5344;--brown2:#8c6d5a;--brown-l:#c4a882;
+  --amber:#c49a5a;--amber-l:#faf0dc;
+  --lavender:#9e8ab0;--lavender-l:#f0ecf7;
+  --text:#3d2b1f;--text2:#7a6050;--text3:#a89080;
+  --border:#ddd0be;--surface:#fffcf8;
+  --sidebar-w:300px;
+  --radius:14px;--shadow:0 2px 12px rgba(100,70,50,0.08);--shadow-md:0 6px 24px rgba(100,70,50,0.13);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+.app{display:flex;min-height:100vh}
+
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:var(--sidebar-w);background:var(--surface);border-right:1.5px solid var(--border);
+  padding:26px 18px;display:flex;flex-direction:column;gap:4px;
+  position:fixed;top:0;bottom:0;left:0;overflow-y:auto;z-index:10;
+}
+.logo{padding:0 8px;margin-bottom:24px}
+.logo-title{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;color:var(--brown);display:flex;align-items:center;gap:8px}
+.logo-title span{font-style:normal}
+.logo-sub{font-size:0.75rem;color:var(--text3);font-weight:500;margin-top:4px}
+.s-sec{font-size:0.62rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:2px;padding:0 10px;margin:16px 0 5px}
+.s-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:none;background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.875rem;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:all 0.15s}
+.s-btn:hover{background:var(--cream2);color:var(--text)}
+.s-btn.active{background:var(--sage-ll);color:var(--sage);font-weight:600}
+.s-btn .s-ico{font-size:1rem;width:22px;text-align:center;flex-shrink:0}
+.s-btn .s-ct{margin-left:auto;font-size:0.68rem;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--cream2);color:var(--text3)}
+.s-btn.active .s-ct{background:var(--sage-l);color:var(--sage)}
+.cat-pip{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.sb-new{margin-top:auto;padding:13px;border-radius:var(--radius);border:none;background:var(--sage);color:#fff;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.88rem;cursor:pointer;transition:background 0.15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.sb-new:hover{background:#7a8e6d}
+
+/* ─── MAIN ─── */
+.main{
+  margin-left:var(--sidebar-w);
+  flex:1;
+  padding:28px 28px 40px 28px;
+  width:calc(100% - var(--sidebar-w));
+  min-width:0;
+}
+.topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.page-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-style:italic;color:var(--brown);letter-spacing:-0.4px}
+.page-title span{font-style:normal}
+.page-date{font-size:0.78rem;color:var(--text3);font-weight:500;margin-top:3px}
+
+/* ─── GRID LAYOUT ─── */
+.grid-top{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.grid-mid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+
+/* ─── BASE WIDGET CARD ─── */
+.wcard{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:18px 22px;box-shadow:var(--shadow)}
+.wcard-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.wcard-title{font-size:0.7rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.8px}
+.wcard-icon{font-size:1.1rem}
+
+/* ─── HERO PROGRESS ─── */
+.hero-card{background:var(--sage);border-radius:18px;padding:22px 26px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-md)}
+.hero-card::before{content:'☀️';position:absolute;right:22px;top:16px;font-size:2.8rem;opacity:0.5}
+.hero-card::after{content:'🌿';position:absolute;right:72px;bottom:12px;font-size:1.7rem;opacity:0.3}
+.hc-sub{font-size:0.65rem;font-weight:700;opacity:0.75;text-transform:uppercase;letter-spacing:1.8px;margin-bottom:10px}
+.hc-row{display:flex;align-items:center;gap:18px;margin-bottom:14px;position:relative;z-index:1}
+.hc-circle{width:72px;height:72px;flex-shrink:0;position:relative}
+.hc-circle svg{transform:rotate(-90deg)}
+.hc-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700}
+.hc-info h2{font-size:1rem;font-weight:700;margin-bottom:2px}
+.hc-info p{font-size:0.76rem;opacity:0.72}
+.hc-stats{display:flex;gap:0;position:relative;z-index:1}
+.hc-stat{flex:1;text-align:center;padding:0 10px;border-right:1px solid rgba(255,255,255,0.22)}
+.hc-stat:last-child{border-right:none}
+.hs-n{font-size:1.4rem;font-weight:700;line-height:1}
+.hs-l{font-size:0.62rem;opacity:0.7;text-transform:uppercase;letter-spacing:1px;margin-top:2px;font-weight:600}
+
+/* ─── POMODORO ─── */
+.pomo-display{text-align:center;margin:8px 0 14px}
+.pomo-time{font-size:2.8rem;font-weight:700;color:var(--brown);letter-spacing:-2px;font-family:'Playfair Display',serif}
+.pomo-label{font-size:0.72rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-top:2px}
+.pomo-ring{display:flex;justify-content:center;margin-bottom:12px}
+.pomo-btns{display:flex;gap:8px;justify-content:center;margin-bottom:12px}
+.pomo-btn{padding:7px 16px;border-radius:99px;border:1.5px solid var(--border);background:var(--cream);color:var(--text2);font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.78rem;cursor:pointer;transition:all 0.15s}
+.pomo-btn:hover{border-color:var(--sage);color:var(--sage)}
+.pomo-btn.primary{background:var(--sage);color:#fff;border-color:var(--sage)}
+.pomo-btn.primary:hover{background:#7a8e6d}
+.pomo-btn.danger{background:var(--rose-ll);color:var(--rose);border-color:var(--rose-l)}
+.pomo-modes{display:flex;gap:6px;justify-content:center}
+.pomo-mode{padding:4px 12px;border-radius:99px;border:1.5px solid var(--border);background:transparent;color:var(--text3);font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+.pomo-mode.active{background:var(--rose-ll);color:var(--rose);border-color:var(--rose-l)}
+.pomo-sessions{display:flex;gap:5px;justify-content:center;margin-top:10px}
+.pomo-dot{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--border);background:transparent;transition:all 0.3s}
+.pomo-dot.done{background:var(--rose);border-color:var(--rose)}
+
+/* ─── MOOD TRACKER ─── */
+.mood-row{display:flex;justify-content:space-between;margin:4px 0 8px}
+.mood-btn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;padding:6px 8px;border-radius:12px;border:1.5px solid transparent;transition:all 0.15s;background:transparent;font-family:'DM Sans',sans-serif}
+.mood-btn:hover{background:var(--cream2)}
+.mood-btn.selected{border-color:var(--sand);background:var(--cream2)}
+.mood-emoji{font-size:1.6rem;line-height:1}
+.mood-lbl{font-size:0.62rem;color:var(--text3);font-weight:600}
+.mood-note{font-size:0.8rem;color:var(--text2);text-align:center;margin-top:6px;font-style:italic;min-height:18px}
+
+/* ─── WATER TRACKER ─── */
+.water-glasses{display:flex;gap:7px;flex-wrap:wrap;margin:4px 0 10px}
+.glass{width:36px;height:44px;border-radius:4px 4px 8px 8px;border:2px solid var(--sand);background:transparent;cursor:pointer;position:relative;overflow:hidden;transition:all 0.2s;flex-shrink:0}
+.glass.filled{border-color:#7ab8d4}
+.glass-fill{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,#a8d8ea,#b8e4f0);transition:height 0.3s ease;border-radius:0 0 6px 6px}
+.water-info{display:flex;align-items:center;justify-content:space-between}
+.water-count{font-size:1.5rem;font-weight:700;color:#5a9ab5;font-family:'Playfair Display',serif}
+.water-goal{font-size:0.72rem;color:var(--text3);font-weight:500}
+.water-msg{font-size:0.75rem;color:var(--text2);font-style:italic;margin-top:4px}
+
+/* ─── TOP PRIORITIES ─── */
+.priority-list{display:flex;flex-direction:column;gap:9px}
+.pri-item{display:flex;align-items:center;gap:10px}
+.pri-num{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0}
+.pri-num.n1{background:var(--rose-ll);color:var(--rose)}
+.pri-num.n2{background:var(--amber-l);color:var(--amber)}
+.pri-num.n3{background:var(--sage-ll);color:var(--sage)}
+.pri-inp{flex:1;border:none;border-bottom:1.5px solid var(--border);background:transparent;padding:5px 2px;font-family:'DM Sans',sans-serif;font-size:0.86rem;color:var(--text);outline:none;transition:border-color 0.15s}
+.pri-inp:focus{border-color:var(--sage)}
+.pri-inp::placeholder{color:var(--text3)}
+.pri-chk{width:18px;height:18px;border-radius:5px;border:1.5px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:700;color:#fff;transition:all 0.15s}
+.pri-chk:hover{border-color:var(--sage)}
+.pri-chk.on{background:var(--sage);border-color:var(--sage)}
+.pri-item.done-pri .pri-inp{text-decoration:line-through;color:var(--text3)}
+
+/* ─── QUICK NOTES ─── */
+.notes-area{width:100%;min-height:110px;border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:0.84rem;color:var(--text);background:var(--cream);resize:none;outline:none;line-height:1.65;transition:border-color 0.15s}
+.notes-area:focus{border-color:var(--sage)}
+.notes-area::placeholder{color:var(--text3);font-style:italic}
+.notes-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.notes-chars{font-size:0.68rem;color:var(--text3)}
+.notes-save{padding:5px 14px;border-radius:8px;border:none;background:var(--sage);color:#fff;font-family:'DM Sans',sans-serif;font-size:0.75rem;font-weight:600;cursor:pointer;transition:background 0.15s}
+.notes-save:hover{background:#7a8e6d}
+.notes-saved{font-size:0.7rem;color:var(--sage);font-weight:600;opacity:0;transition:opacity 0.3s}
+.notes-saved.show{opacity:1}
+
+/* ─── WEEKLY CHART ─── */
+.chart-bars{display:flex;align-items:flex-end;gap:10px;height:90px;margin:8px 0 6px}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-wrap{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center}
+.bar{width:100%;border-radius:6px 6px 3px 3px;transition:height 0.5s cubic-bezier(.4,0,.2,1);min-height:4px;max-width:40px}
+.bar.done-bar{background:var(--sage)}
+.bar.pend-bar{background:var(--cream2)}
+.chart-day{font-size:0.66rem;color:var(--text3);font-weight:600}
+.chart-num{font-size:0.62rem;color:var(--text2);font-weight:700}
+.chart-legend{display:flex;gap:14px;margin-top:6px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:0.7rem;color:var(--text2);font-weight:500}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+
+/* ─── ADD PANEL ─── */
+.add-panel{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:16px 20px;margin-bottom:14px;box-shadow:var(--shadow)}
+.add-lbl{font-size:0.63rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.8px;margin-bottom:10px}
+.add-row{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.inp{border:1.5px solid var(--border);border-radius:10px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;background:var(--cream);color:var(--text);outline:none;transition:border-color 0.15s}
+.inp:focus{border-color:var(--sage)}
+.inp.inp-name{flex:1;min-width:180px}
+.inp[type="date"],.inp[type="time"]{min-width:120px;color:var(--text2)}
+.add-go{padding:8px 18px;border-radius:10px;border:none;background:var(--sage);color:#fff;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;transition:background 0.15s;white-space:nowrap}
+.add-go:hover{background:#7a8e6d}
+
+/* ─── CHIPS ─── */
+.chips{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.chip{padding:5px 13px;border-radius:99px;border:1.5px solid var(--border);background:var(--surface);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:0.76rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+.chip:hover{border-color:var(--sage);color:var(--sage)}
+.chip.active{background:var(--sage);color:#fff;border-color:var(--sage)}
+
+/* ─── TASK CARDS ─── */
+.task-list{display:flex;flex-direction:column;gap:7px}
+.task-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:12px 16px;display:flex;align-items:center;gap:11px;transition:box-shadow 0.15s,border-color 0.15s;animation:rise 0.2s ease}
+@keyframes rise{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
+.task-card:hover{box-shadow:var(--shadow-md);border-color:var(--sand)}
+.task-card.done{opacity:0.52}
+.task-card.done .tc-name{text-decoration:line-through;color:var(--text3)}
+.task-card.pri-High{border-left:4px solid var(--rose)}
+.task-card.pri-Medium{border-left:4px solid var(--amber)}
+.task-card.pri-Low{border-left:4px solid var(--sage-l)}
+.chk{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);background:transparent;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.15s;font-size:0.66rem;font-weight:800;color:#fff}
+.chk:hover{border-color:var(--sage)}
+.chk.on{background:var(--sage);border-color:var(--sage)}
+.tc-body{flex:1;min-width:0}
+.tc-name{font-size:0.87rem;font-weight:600;display:block;margin-bottom:4px;color:var(--text)}
+.tc-tags{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
+.tag{font-size:0.64rem;font-weight:700;padding:2px 8px;border-radius:99px}
+.tg-work{background:#eaf0e4;color:#6b8060}
+.tg-personal{background:#f0eae4;color:#9a6a55}
+.tg-health{background:#e4eaf0;color:#5a708a}
+.tg-learning{background:var(--lavender-l);color:var(--lavender)}
+.tg-high{background:var(--rose-ll);color:var(--rose)}
+.tg-medium{background:var(--amber-l);color:var(--amber)}
+.tg-low{background:var(--sage-ll);color:var(--sage)}
+.tg-dt{background:var(--cream2);color:var(--text2)}
+.tc-acts{display:flex;gap:5px;opacity:0;transition:opacity 0.15s}
+.task-card:hover .tc-acts{opacity:1}
+.act{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--border);background:var(--cream);cursor:pointer;font-size:0.78rem;display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.act.edit:hover{background:var(--sage-ll);border-color:var(--sage-l)}
+.act.del:hover{background:var(--rose-ll);border-color:var(--rose-l)}
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-ico{font-size:2.2rem;margin-bottom:8px}
+.empty-msg{font-size:0.88rem;font-weight:600}
+
+/* ─── MODAL ─── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(60,40,25,0.35);backdrop-filter:blur(5px);z-index:200;align-items:center;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--surface);border-radius:20px;padding:24px 26px;width:420px;max-width:92vw;animation:mPop 0.25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 20px 60px rgba(80,50,30,0.18);border:1.5px solid var(--border)}
+@keyframes mPop{from{transform:scale(0.85);opacity:0}to{transform:scale(1);opacity:1}}
+.m-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-style:italic;color:var(--brown);margin-bottom:16px}
+.m-lbl{font-size:0.64rem;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px;display:block}
+.m-f{margin-bottom:12px}
+.m-row{display:flex;gap:9px}
+.m-row .m-f{flex:1}
+.m-inp,.m-sel{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:0.84rem;background:var(--cream);color:var(--text);outline:none;transition:border-color 0.15s}
+.m-inp:focus,.m-sel:focus{border-color:var(--sage)}
+.m-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+.m-save{padding:9px 20px;border-radius:10px;border:none;background:var(--sage);color:#fff;font-family:'DM Sans',sans-serif;font-weight:700;font-size:0.84rem;cursor:pointer;transition:background 0.15s}
+.m-save:hover{background:#7a8e6d}
+.m-cancel{padding:9px 14px;border-radius:10px;border:1.5px solid var(--border);background:transparent;color:var(--text2);font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.84rem;cursor:pointer}
+.m-cancel:hover{background:var(--cream2)}
+
+@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;padding:16px 14px;width:100%}.grid-top,.grid-mid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-title">Today's <span>Plan</span> ✦</div>
+    <div class="logo-sub">Let's make today beautiful 🌸</div>
+  </div>
+  <div class="s-sec">Views</div>
+  <button class="s-btn active" onclick="setSide('all',this)"><span class="s-ico">📋</span>All Tasks<span class="s-ct" id="b-all">0</span></button>
+  <button class="s-btn" onclick="setSide('today',this)"><span class="s-ico">🗓️</span>Today<span class="s-ct" id="b-today">0</span></button>
+  <button class="s-btn" onclick="setSide('pending',this)"><span class="s-ico">⏳</span>Pending<span class="s-ct" id="b-pending">0</span></button>
+  <button class="s-btn" onclick="setSide('done',this)"><span class="s-ico">🌸</span>Completed<span class="s-ct" id="b-done">0</span></button>
+  <div class="s-sec">Categories</div>
+  <button class="s-btn" onclick="setSide('Work',this)"><span class="cat-pip" style="background:#8b9e7c"></span>Work<span class="s-ct" id="b-Work">0</span></button>
+  <button class="s-btn" onclick="setSide('Personal',this)"><span class="cat-pip" style="background:#c9908a"></span>Personal<span class="s-ct" id="b-Personal">0</span></button>
+  <button class="s-btn" onclick="setSide('Health',this)"><span class="cat-pip" style="background:#c49a5a"></span>Health<span class="s-ct" id="b-Health">0</span></button>
+  <button class="s-btn" onclick="setSide('Learning',this)"><span class="cat-pip" style="background:#9e8ab0"></span>Learning<span class="s-ct" id="b-Learning">0</span></button>
+  <button class="sb-new" onclick="document.getElementById('inp-name').focus()">+ New Task</button>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="pageTitle">All <span>Tasks</span></div>
+      <div class="page-date" id="pageDate"></div>
+    </div>
+  </div>
+
+  <!-- ROW 1: Progress + Pomodoro + Mood -->
+  <div class="grid-top">
+
+    <!-- Progress hero -->
+    <div class="hero-card">
+      <div class="hc-sub">Today's Progress</div>
+      <div class="hc-row">
+        <div class="hc-circle">
+          <svg width="72" height="72" viewBox="0 0 72 72">
+            <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="7"/>
+            <circle cx="36" cy="36" r="28" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-dasharray="175.9" id="prog-ring" stroke-dashoffset="175.9"/>
+          </svg>
+          <div class="hc-pct" id="prog-pct">0%</div>
+        </div>
+        <div class="hc-info">
+          <h2 id="prog-msg">Start your day!</h2>
+          <p>Keep going 🌿</p>
+        </div>
+      </div>
+      <div class="hc-stats">
+        <div class="hc-stat"><div class="hs-n" id="hs-total">0</div><div class="hs-l">Total</div></div>
+        <div class="hc-stat"><div class="hs-n" id="hs-done">0</div><div class="hs-l">Done</div></div>
+        <div class="hc-stat"><div class="hs-n" id="hs-pend">0</div><div class="hs-l">Left</div></div>
+      </div>
+    </div>
+
+    <!-- Pomodoro Timer -->
+    <div class="wcard">
+      <div class="wcard-head">
+        <span class="wcard-title">Pomodoro Timer</span>
+        <span class="wcard-icon">⏰</span>
+      </div>
+      <div class="pomo-modes">
+        <button class="pomo-mode active" onclick="setPomoMode('work',this)">Focus</button>
+        <button class="pomo-mode" onclick="setPomoMode('short',this)">Short Break</button>
+        <button class="pomo-mode" onclick="setPomoMode('long',this)">Long Break</button>
+      </div>
+      <div class="pomo-display">
+        <div class="pomo-time" id="pomo-time">25:00</div>
+        <div class="pomo-label" id="pomo-label">Focus Time</div>
+      </div>
+      <div class="pomo-ring">
+        <svg width="70" height="6" style="border-radius:99px;overflow:hidden">
+          <rect x="0" y="0" width="70" height="6" fill="#ede4d8" rx="3"/>
+          <rect x="0" y="0" height="6" rx="3" fill="#c9908a" id="pomo-bar" width="70"/>
+        </svg>
+      </div>
+      <div class="pomo-btns">
+        <button class="pomo-btn primary" id="pomo-start" onclick="togglePomo()">▶ Start</button>
+        <button class="pomo-btn danger" onclick="resetPomo()">↺ Reset</button>
+      </div>
+      <div class="pomo-sessions" id="pomo-dots">
+        <div class="pomo-dot"></div><div class="pomo-dot"></div>
+        <div class="pomo-dot"></div><div class="pomo-dot"></div>
+      </div>
+    </div>
+
+    <!-- Mood Tracker -->
+    <div class="wcard">
+      <div class="wcard-head">
+        <span class="wcard-title">Mood Tracker</span>
+        <span class="wcard-icon">🌤️</span>
+      </div>
+      <div class="mood-row">
+        <button class="mood-btn" onclick="setMood(0,this)" data-note="Not great today 💙">
+          <span class="mood-emoji">😔</span><span class="mood-lbl">Sad</span>
+        </button>
+        <button class="mood-btn" onclick="setMood(1,this)" data-note="Feeling a bit low...">
+          <span class="mood-emoji">😕</span><span class="mood-lbl">Meh</span>
+        </button>
+        <button class="mood-btn" onclick="setMood(2,this)" data-note="Doing okay today 🙂">
+          <span class="mood-emoji">😐</span><span class="mood-lbl">Okay</span>
+        </button>
+        <button class="mood-btn" onclick="setMood(3,this)" data-note="Feeling pretty good! ☀️">
+          <span class="mood-emoji">🙂</span><span class="mood-lbl">Good</span>
+        </button>
+        <button class="mood-btn" onclick="setMood(4,this)" data-note="Amazing day! 🌟">
+          <span class="mood-emoji">😄</span><span class="mood-lbl">Great</span>
+        </button>
+      </div>
+      <div class="mood-note" id="mood-note">How are you feeling today?</div>
+    </div>
+  </div>
+
+  <!-- ROW 2: Tasks main + Right sidebar -->
+  <div class="grid-mid">
+    <div>
+      <!-- Add task -->
+      <div class="add-panel">
+        <div class="add-lbl">Add New Task</div>
+        <div class="add-row">
+          <input class="inp inp-name" id="inp-name" type="text" placeholder="What needs to be done today?"/>
+          <select class="inp" id="inp-cat">
+            <option value="Work">💼 Work</option>
+            <option value="Personal">🏠 Personal</option>
+            <option value="Health">💪 Health</option>
+            <option value="Learning">📚 Learning</option>
+          </select>
+          <select class="inp" id="inp-pri">
+            <option value="High">🔴 High</option>
+            <option value="Medium" selected>🟡 Medium</option>
+            <option value="Low">🟢 Low</option>
+          </select>
+          <input class="inp" type="date" id="inp-date"/>
+          <input class="inp" type="time" id="inp-time"/>
+          <button class="add-go" onclick="addTask()">+ Add</button>
+        </div>
+      </div>
+      <!-- Chips -->
+      <div class="chips">
+        <button class="chip active" onclick="setChip('all',this)">All</button>
+        <button class="chip" onclick="setChip('pending',this)">Pending</button>
+        <button class="chip" onclick="setChip('done',this)">Completed</button>
+        <button class="chip" onclick="setChip('High',this)">🌺 High</button>
+        <button class="chip" onclick="setChip('today',this)">🌤️ Today</button>
+      </div>
+      <div class="task-list" id="taskList"></div>
+    </div>
+
+    <!-- Right column: Water + Priorities + Notes -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- Water Tracker -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <span class="wcard-title">Water Intake</span>
+          <span class="wcard-icon">💧</span>
+        </div>
+        <div class="water-glasses" id="water-glasses"></div>
+        <div class="water-info">
+          <div>
+            <div class="water-count"><span id="water-count">0</span><span style="font-size:0.9rem;color:var(--text3)">/8</span></div>
+            <div class="water-goal">glasses today</div>
+          </div>
+          <button onclick="resetWater()" style="font-size:0.7rem;color:var(--text3);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif">Reset ↺</button>
+        </div>
+        <div class="water-msg" id="water-msg">Click glasses to track! 💧</div>
+      </div>
+
+      <!-- Top 3 Priorities -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <span class="wcard-title">Top Priorities</span>
+          <span class="wcard-icon">🎯</span>
+        </div>
+        <div class="priority-list">
+          <div class="pri-item" id="pri-0">
+            <div class="pri-num n1">1</div>
+            <input class="pri-inp" placeholder="Your #1 priority…" id="pri-inp-0"/>
+            <div class="pri-chk" onclick="togglePri(0)"></div>
+          </div>
+          <div class="pri-item" id="pri-1">
+            <div class="pri-num n2">2</div>
+            <input class="pri-inp" placeholder="Second priority…" id="pri-inp-1"/>
+            <div class="pri-chk" onclick="togglePri(1)"></div>
+          </div>
+          <div class="pri-item" id="pri-2">
+            <div class="pri-num n3">3</div>
+            <input class="pri-inp" placeholder="Third priority…" id="pri-inp-2"/>
+            <div class="pri-chk" onclick="togglePri(2)"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Notes -->
+      <div class="wcard">
+        <div class="wcard-head">
+          <span class="wcard-title">Quick Notes</span>
+          <span class="wcard-icon">📝</span>
+        </div>
+        <textarea class="notes-area" id="notes-area" placeholder="Jot down thoughts, ideas, reminders…" oninput="notesInput()"></textarea>
+        <div class="notes-footer">
+          <span class="notes-chars" id="notes-chars">0 chars</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="notes-saved" id="notes-saved">✓ Saved!</span>
+            <button class="notes-save" onclick="saveNotes()">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 3: Weekly Chart full width -->
+  <div class="wcard">
+    <div class="wcard-head">
+      <span class="wcard-title">Weekly Progress</span>
+      <span class="wcard-icon">📊</span>
+    </div>
+    <div class="chart-bars" id="chart-bars"></div>
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--sage)"></div>Completed</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cream2)"></div>Pending</div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <div class="m-title">Edit Task ✦</div>
+    <div class="m-f"><label class="m-lbl">Task Name</label><input class="m-inp" id="m-name" type="text"/></div>
+    <div class="m-row">
+      <div class="m-f"><label class="m-lbl">Category</label><select class="m-sel" id="m-cat"><option>Work</option><option>Personal</option><option>Health</option><option>Learning</option></select></div>
+      <div class="m-f"><label class="m-lbl">Priority</label><select class="m-sel" id="m-pri"><option>High</option><option>Medium</option><option>Low</option></select></div>
+    </div>
+    <div class="m-row">
+      <div class="m-f"><label class="m-lbl">Date</label><input class="m-inp" id="m-date" type="date"/></div>
+      <div class="m-f"><label class="m-lbl">Time</label><input class="m-inp" id="m-time" type="time"/></div>
+    </div>
+    <div class="m-btns">
+      <button class="m-cancel" onclick="closeModal()">Cancel</button>
+      <button class="m-save" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let tasks=[
+  {id:1,name:'Finish project report',cat:'Work',pri:'High',date:'',time:'09:00',done:false},
+  {id:2,name:'Morning workout session',cat:'Health',pri:'Medium',date:td(),time:'07:00',done:true},
+  {id:3,name:'Read 30 minutes',cat:'Learning',pri:'Low',date:td(),time:'21:30',done:false},
+  {id:4,name:'Grocery shopping',cat:'Personal',pri:'Medium',date:td(),time:'',done:false},
+  {id:5,name:'Prepare presentation',cat:'Work',pri:'High',date:td(),time:'14:00',done:false},
+];
+let uid=6,sideF='all',chipF='all',editId=null;
+function td(){return new Date().toISOString().split('T')[0]}
+
+function addTask(){
+  const n=document.getElementById('inp-name').value.trim();if(!n)return;
+  tasks.push({id:uid++,name:n,cat:document.getElementById('inp-cat').value,
+    pri:document.getElementById('inp-pri').value,
+    date:document.getElementById('inp-date').value,
+    time:document.getElementById('inp-time').value,done:false});
+  document.getElementById('inp-name').value='';render();
+}
+document.getElementById('inp-name').addEventListener('keydown',e=>{if(e.key==='Enter')addTask()});
+function toggle(id){const t=tasks.find(t=>t.id===id);if(t)t.done=!t.done;render()}
+function del(id){tasks=tasks.filter(t=>t.id!==id);render()}
+function openEdit(id){
+  editId=id;const t=tasks.find(t=>t.id===id);
+  document.getElementById('m-name').value=t.name;document.getElementById('m-cat').value=t.cat;
+  document.getElementById('m-pri').value=t.pri;document.getElementById('m-date').value=t.date;
+  document.getElementById('m-time').value=t.time;
+  document.getElementById('modalBg').classList.add('open');
+}
+function saveEdit(){
+  const t=tasks.find(t=>t.id===editId);
+  if(t){t.name=document.getElementById('m-name').value.trim()||t.name;t.cat=document.getElementById('m-cat').value;
+    t.pri=document.getElementById('m-pri').value;t.date=document.getElementById('m-date').value;t.time=document.getElementById('m-time').value;}
+  closeModal();render();
+}
+function closeModal(){document.getElementById('modalBg').classList.remove('open')}
+function setSide(f,btn){
+  sideF=f;chipF='all';
+  document.querySelectorAll('.s-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.chip').forEach((b,i)=>{b.classList.toggle('active',i===0)});
+  const map={all:'All Tasks',today:"Today's Tasks",pending:'Pending',done:'Completed',Work:'Work Tasks',Personal:'Personal',Health:'Health',Learning:'Learning'};
+  document.getElementById('pageTitle').textContent=map[f]||f;render();
+}
+function setChip(f,btn){
+  chipF=f;document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();
+}
+function filtered(){
+  let l=[...tasks];const today=td();
+  if(sideF==='today')l=l.filter(t=>t.date===today);
+  else if(sideF==='pending')l=l.filter(t=>!t.done);
+  else if(sideF==='done')l=l.filter(t=>t.done);
+  else if(['Work','Personal','Health','Learning'].includes(sideF))l=l.filter(t=>t.cat===sideF);
+  if(chipF==='pending')l=l.filter(t=>!t.done);
+  else if(chipF==='done')l=l.filter(t=>t.done);
+  else if(chipF==='High')l=l.filter(t=>t.pri==='High');
+  else if(chipF==='today')l=l.filter(t=>t.date===today);
+  return l;
+}
+function fmtDT(d,t){let p=[];if(d){const x=new Date(d+'T12:00:00');p.push(x.toLocaleDateString('en-IN',{day:'numeric',month:'short'}));}if(t)p.push(t);return p.join(' · ')}
+function catCls(c){return{Work:'tg-work',Personal:'tg-personal',Health:'tg-health',Learning:'tg-learning'}[c]||'tg-work'}
+function priCls(p){return{High:'tg-high',Medium:'tg-medium',Low:'tg-low'}[p]||'tg-medium'}
+
+const POMO_MODES={work:{min:25,label:'Focus Time'},short:{min:5,label:'Short Break'},long:{min:15,label:'Long Break'}};
+let pomoMode='work',pomoSec=25*60,pomoRunning=false,pomoInterval=null,pomoSessions=0;
+function setPomoMode(mode,btn){
+  if(pomoRunning){clearInterval(pomoInterval);pomoRunning=false;document.getElementById('pomo-start').textContent='▶ Start';}
+  pomoMode=mode;pomoSec=POMO_MODES[mode].min*60;
+  document.querySelectorAll('.pomo-mode').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  document.getElementById('pomo-label').textContent=POMO_MODES[mode].label;
+  updatePomoDisplay();updatePomoBar();
+}
+function togglePomo(){
+  if(pomoRunning){clearInterval(pomoInterval);pomoRunning=false;document.getElementById('pomo-start').textContent='▶ Start';}
+  else{pomoRunning=true;document.getElementById('pomo-start').textContent='⏸ Pause';
+    pomoInterval=setInterval(()=>{
+      pomoSec--;updatePomoDisplay();updatePomoBar();
+      if(pomoSec<=0){
+        clearInterval(pomoInterval);pomoRunning=false;
+        document.getElementById('pomo-start').textContent='▶ Start';
+        if(pomoMode==='work'){pomoSessions=Math.min(pomoSessions+1,4);updatePomoDots();}
+        pomoSec=POMO_MODES[pomoMode].min*60;updatePomoDisplay();updatePomoBar();
+      }
+    },1000);
+  }
+}
+function resetPomo(){
+  clearInterval(pomoInterval);pomoRunning=false;
+  pomoSec=POMO_MODES[pomoMode].min*60;
+  document.getElementById('pomo-start').textContent='▶ Start';
+  updatePomoDisplay();updatePomoBar();
+}
+function updatePomoDisplay(){
+  const m=Math.floor(pomoSec/60),s=pomoSec%60;
+  document.getElementById('pomo-time').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function updatePomoBar(){
+  const total=POMO_MODES[pomoMode].min*60;
+  document.getElementById('pomo-bar').setAttribute('width',Math.round(70*(pomoSec/total)));
+}
+function updatePomoDots(){
+  document.querySelectorAll('.pomo-dot').forEach((d,i)=>{d.classList.toggle('done',i<pomoSessions)});
+}
+
+function setMood(idx,btn){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('mood-note').textContent=btn.dataset.note;
+}
+
+let waterCount=0;
+function buildWater(){
+  const el=document.getElementById('water-glasses');
+  el.innerHTML='';
+  for(let i=0;i<8;i++){
+    const g=document.createElement('div');
+    g.className='glass'+(i<waterCount?' filled':'');
+    g.innerHTML=`<div class="glass-fill" style="height:${i<waterCount?'80%':'0'}"></div>`;
+    g.onclick=()=>{waterCount=i<waterCount?i:i+1;buildWater();updateWaterMsg()};
+    el.appendChild(g);
+  }
+  document.getElementById('water-count').textContent=waterCount;
+}
+function resetWater(){waterCount=0;buildWater();updateWaterMsg()}
+function updateWaterMsg(){
+  const msgs=['Click glasses to track! 💧','Great start! Keep going 💧','Halfway there! 🌊','Almost done! 💪','Fully hydrated! Amazing! 🎉'];
+  const idx=waterCount>=8?4:waterCount>=6?3:waterCount>=4?2:waterCount>=2?1:0;
+  document.getElementById('water-msg').textContent=msgs[idx];
+}
+
+let priDone=[false,false,false];
+function togglePri(i){
+  priDone[i]=!priDone[i];
+  const item=document.getElementById('pri-'+i);
+  const chk=item.querySelector('.pri-chk');
+  item.classList.toggle('done-pri',priDone[i]);
+  chk.classList.toggle('on',priDone[i]);
+  chk.textContent=priDone[i]?'✓':'';
+}
+
+function notesInput(){
+  const v=document.getElementById('notes-area').value;
+  document.getElementById('notes-chars').textContent=v.length+' chars';
+}
+function saveNotes(){
+  const saved=document.getElementById('notes-saved');
+  saved.classList.add('show');
+  setTimeout(()=>saved.classList.remove('show'),2000);
+}
+
+function buildChart(){
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const today=new Date().getDay();const todayIdx=(today+6)%7;
+  const el=document.getElementById('chart-bars');el.innerHTML='';
+  const data=days.map((d,i)=>{
+    if(i===todayIdx){const done=tasks.filter(t=>t.done).length;const total=tasks.length;return{done,total}}
+    const total=Math.floor(Math.random()*5)+1;
+    const done=i<todayIdx?Math.floor(Math.random()*(total+1)):0;
+    return{done,total};
+  });
+  const maxTotal=Math.max(...data.map(d=>d.total),1);
+  data.forEach((d,i)=>{
+    const col=document.createElement('div');col.className='chart-col';
+    const doneH=Math.round((d.done/maxTotal)*88);
+    const pendH=Math.round(((d.total-d.done)/maxTotal)*88);
+    col.innerHTML=`
+      <div class="bar-wrap" style="flex-direction:column;justify-content:flex-end;gap:2px">
+        <div class="bar done-bar" style="height:${doneH}px"></div>
+        ${pendH>0?`<div class="bar pend-bar" style="height:${pendH}px"></div>`:''}
+      </div>
+      <div class="chart-day">${days[i]}</div>
+      <div class="chart-num">${d.done}/${d.total}</div>`;
+    el.appendChild(col);
+  });
+}
+
+function render(){
+  const today=td();
+  document.getElementById('b-all').textContent=tasks.length;
+  document.getElementById('b-today').textContent=tasks.filter(t=>t.date===today).length;
+  document.getElementById('b-pending').textContent=tasks.filter(t=>!t.done).length;
+  document.getElementById('b-done').textContent=tasks.filter(t=>t.done).length;
+  ['Work','Personal','Health','Learning'].forEach(c=>{document.getElementById('b-'+c).textContent=tasks.filter(t=>t.cat===c).length});
+  const done=tasks.filter(t=>t.done).length;
+  const pct=tasks.length?Math.round(done/tasks.length*100):0;
+  document.getElementById('hs-total').textContent=tasks.length;
+  document.getElementById('hs-done').textContent=done;
+  document.getElementById('hs-pend').textContent=tasks.length-done;
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-msg').textContent=pct===100?'All done! 🌸':pct>=50?pct+'% done — great!':done>0?done+' task'+(done>1?'s':'')+' done!':'Start your day!';
+  const c=2*Math.PI*28;
+  document.getElementById('prog-ring').style.strokeDashoffset=c-(c*pct/100);
+  document.getElementById('pageDate').textContent=new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const list=filtered();
+  const el=document.getElementById('taskList');
+  if(!list.length){el.innerHTML=`<div class="empty"><div class="empty-ico">🌸</div><div class="empty-msg">Nothing here — all clear!</div></div>`;return}
+  el.innerHTML=list.map(t=>`
+    <div class="task-card pri-${t.pri} ${t.done?'done':''}">
+      <div class="chk ${t.done?'on':''}" onclick="toggle(${t.id})">${t.done?'✓':''}</div>
+      <div class="tc-body">
+        <span class="tc-name">${t.name}</span>
+        <div class="tc-tags">
+          <span class="tag ${catCls(t.cat)}">${t.cat}</span>
+          <span class="tag ${priCls(t.pri)}">${t.pri}</span>
+          ${fmtDT(t.date,t.time)?`<span class="tag tg-dt">🕐 ${fmtDT(t.date,t.time)}</span>`:''}
+        </div>
+      </div>
+      <div class="tc-acts">
+        <button class="act edit" onclick="openEdit(${t.id})">✏️</button>
+        <button class="act del" onclick="del(${t.id})">🗑️</button>
+      </div>
+    </div>`).join('');
+  buildChart();
+}
+
+document.getElementById('inp-date').value=td();
+buildWater();
+render();
+</script>
+</body>
+</html>
